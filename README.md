@@ -1,4 +1,4 @@
-# AWS-Lambda-java-basic-microservice
+# AWS-Lambda-java-DynamoDB-enhanced-client-microservice
 The project was built to explore the new **DynamoDB Enhanced Client**.  
 Conceptually a user can manage "memoryCards" (things he wants to learn and remember) using this service.
 
