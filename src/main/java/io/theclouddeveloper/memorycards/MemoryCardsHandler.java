@@ -105,6 +105,34 @@ public class MemoryCardsHandler {
         return response;
     }
 
+    public APIGatewayV2ProxyResponseEvent handleGetAllFromAuthorWithCategory(APIGatewayV2ProxyRequestEvent input, Context context) {
+        Map<String, String> pathParameters = input.getPathParameters();
+        String authorToQuery = pathParameters.get("author");
+        String categoryToQuery = pathParameters.get("category");
+
+        log.info("Received request to find all card from author: {}, with category: {}", authorToQuery, categoryToQuery);
+
+        List<MemoryCard> memoryCards = memoryCardService.processGetAllFromAuthorWithCategoryRequest(authorToQuery, categoryToQuery);
+
+        if(memoryCards.isEmpty()){
+            ResponseMessageBody responseMessageBody = ResponseMessageBody.builder()
+                    .message(String.format("Could not find any memory cards matching author: %s with category: %s", authorToQuery, categoryToQuery))
+                    .build();
+            APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
+            response.setStatusCode(404);
+            response.setHeaders(standardResponseHeaders);
+            response.setBody(gson.toJson(responseMessageBody));
+            return response;
+        }
+
+        APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
+        response.setBody(gson.toJson(memoryCards));
+        response.setHeaders(standardResponseHeaders);
+        response.setStatusCode(200);
+
+        return response;
+    }
+
 
 
 

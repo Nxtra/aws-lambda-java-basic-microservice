@@ -22,7 +22,7 @@ Resources:
       CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
       Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleCreateNewMemoryCardRequest
       Runtime: java11
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 30
       Tracing: Active
       Policies:
@@ -51,7 +51,7 @@ Resources:
       CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
       Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleGetAllNewMemoryCardsRequest
       Runtime: java11
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 30
       Tracing: Active
       Policies:
@@ -70,6 +70,35 @@ Resources:
           Properties:
             Path: /memory-cards
             Method: GET
+  GetMemoryCardsByAuthorWithCategoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-GetMemoryCardsByAuthorWithCategory
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: GetMemoryCardsByAuthorWithCategory
+      CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
+      Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleGetAllFromAuthorWithCategory
+      Runtime: java11
+      MemorySize: 1024
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MemoryCardsTable
+      ReservedConcurrentExecutions: 1
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref MemoryCardsTable
+          TABLE_ARN: !GetAtt MemoryCardsTable.Arn
+          REGION: "eu-west-1"
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /memory-cards/{author}/{category}
+            Method: GET
   GetMemoryCardByUuidFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -80,7 +109,7 @@ Resources:
       CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
       Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleGetMemoryCardByUuidRequest
       Runtime: java11
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 30
       Tracing: Active
       Policies:
@@ -109,7 +138,7 @@ Resources:
       CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
       Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleDeleteMemoryCardByUuid
       Runtime: java11
-      MemorySize: 512
+      MemorySize: 1024
       Timeout: 30
       Tracing: Active
       Policies:

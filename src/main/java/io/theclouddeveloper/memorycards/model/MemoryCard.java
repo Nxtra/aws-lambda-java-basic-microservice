@@ -44,8 +44,8 @@ public class MemoryCard {
         return categoryCreatedTimestamp;
     }
 
-    public void setCategoryCreatedTimestamp(String category_creationTimestamp) {
-        this.categoryCreatedTimestamp = category_creationTimestamp;
+    public void setCategoryCreatedTimestamp(String categoryCreationTimestamp) {
+        this.categoryCreatedTimestamp = categoryCreationTimestamp;
     }
 
     public String getCategory() {
@@ -61,7 +61,7 @@ public class MemoryCard {
         return createdTimestamp;
     }
 
-    @DynamoDbSecondarySortKey(indexNames = {"createdTimestampIndex"})
+    @DynamoDbSecondarySortKey(indexNames = "createdTimestampIndex")
     public void setCreatedTimestamp(String createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }

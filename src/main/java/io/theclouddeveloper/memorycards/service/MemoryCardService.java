@@ -62,4 +62,12 @@ public class MemoryCardService {
         MemoryCard memoryCardThatWasDeleted = memoryCardDynamoDBService.deleteMemoryCard(memoryCardOptional.get());
         return true;
     }
+
+    public List<MemoryCard> processGetAllFromAuthorWithCategoryRequest(String author, String category){
+        log.info("Processing fetch request of author-category combination");
+
+        List<MemoryCard> memoryCards = memoryCardDynamoDBService.getMemoryCardsFromAuthorWithCategory(author, category);
+
+        return memoryCards;
+    }
 }

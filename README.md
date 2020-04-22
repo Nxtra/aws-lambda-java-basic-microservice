@@ -30,9 +30,4 @@ These endpoints will all trigger different operations on DynamoDB using the `enh
 If you are using IntelliJ you can use the Http Requests in the `http` folder to trigger the endpoints.  
 * Update the URL in `http-client.env.json` to your own URL
 * run all requests in `api.http` using the `test` environment
-# TODO
-* add intellij http
-* output url?
 
-* multiple handlers
-* instrument with xray
