@@ -34,6 +34,7 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
+          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -49,11 +50,31 @@ Resources:
           AttributeType: S
         - AttributeName: category_createdTimestamp
           AttributeType: S
+        - AttributeName: createdTimestamp
+          AttributeType: S
+        - AttributeName: uuid
+          AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
         - AttributeName: author
           KeyType: HASH
         - AttributeName: category_createdTimestamp
           KeyType: RANGE
+      LocalSecondaryIndexes:
+        - IndexName: createdTimestampIndex
+          KeySchema:
+            - AttributeName: author
+              KeyType: HASH
+            - AttributeName: createdTimestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      GlobalSecondaryIndexes:
+        - IndexName: idIndex
+          KeySchema:
+            - AttributeName: uuid
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
