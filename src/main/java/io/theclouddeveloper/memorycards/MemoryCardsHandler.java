@@ -13,13 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 
 @Slf4j
-public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, APIGatewayV2ProxyResponseEvent> {
+public class MemoryCardsHandler {
 
     Gson gson = new GsonBuilder().create();
     MemoryCardService memoryCardService = new MemoryCardService();
 
-    @Override
-    public APIGatewayV2ProxyResponseEvent handleRequest(APIGatewayV2ProxyRequestEvent input, Context context) {
+    public APIGatewayV2ProxyResponseEvent handleCreateNewMemoryCardRequest(APIGatewayV2ProxyRequestEvent input, Context context) {
         String body = input.getBody();
         MemoryCard memoryCard = parseMemoryCard(body);
 
@@ -29,13 +28,15 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
 
         Map<String, String> headers = Map.of("Content-Type", "application/json");
 
-        APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent(); // It's a pity there is not default builder for this class
+        APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent(); // It's a pity there is no default builder for this class
         response.setBody(gson.toJson(createdMemoryCard));
         response.setHeaders(headers);
         response.setStatusCode(202);
 
         return response;
     }
+
+
 
     private MemoryCard parseMemoryCard(String memoryCardStringified){
         return gson.fromJson(memoryCardStringified, MemoryCard.class);

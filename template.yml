@@ -20,7 +20,7 @@ Resources:
         - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
         - ResourceName: CreateNewMemoryCard
       CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
-      Handler: io.theclouddeveloper.memorycards.Handler::handleRequest
+      Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleCreateNewMemoryCardRequest
       Runtime: java11
       MemorySize: 512
       Timeout: 30
