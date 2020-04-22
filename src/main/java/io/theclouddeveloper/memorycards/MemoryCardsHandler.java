@@ -10,6 +10,7 @@ import io.theclouddeveloper.memorycards.model.MemoryCard;
 import io.theclouddeveloper.memorycards.service.MemoryCardService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public class MemoryCardsHandler {
 
     private Gson gson;
     private MemoryCardService memoryCardService;
+    private static Map<String, String> standardResponseHeaders = Map.of("Content-Type", "application/json");
+
 
     public MemoryCardsHandler() {
         gson = new GsonBuilder().create();
@@ -32,17 +35,25 @@ public class MemoryCardsHandler {
 
         MemoryCard createdMemoryCard = memoryCardService.processCreateNewMemoryCardRequest(memoryCard);
 
-        Map<String, String> headers = Map.of("Content-Type", "application/json");
-
         APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent(); // It's a pity there is no default builder for this class
         response.setBody(gson.toJson(createdMemoryCard));
-        response.setHeaders(headers);
+        response.setHeaders(standardResponseHeaders);
         response.setStatusCode(202);
 
         return response;
     }
 
+    public APIGatewayV2ProxyResponseEvent handleGetAllNewMemoryCardsRequest(APIGatewayV2ProxyRequestEvent input, Context context) {
 
+        List<MemoryCard> memoryCards = memoryCardService.processGetAllMemoryCardsRequest();
+
+        APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
+        response.setBody(gson.toJson(memoryCards));
+        response.setHeaders(standardResponseHeaders);
+        response.setStatusCode(202);
+
+        return response;
+    }
 
     public APIGatewayV2ProxyResponseEvent handleGetMemoryCardByUuidRequest(APIGatewayV2ProxyRequestEvent input, Context context) {
         String uuid = input.getPathParameters().get("uuid");
@@ -57,11 +68,9 @@ public class MemoryCardsHandler {
             return response;
         }
 
-        Map<String, String> headers = Map.of("Content-Type", "application/json");
-
         APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
         response.setBody(gson.toJson(fetchedMemoryCard.get()));
-        response.setHeaders(headers);
+        response.setHeaders(standardResponseHeaders);
         response.setStatusCode(200);
 
         return response;
@@ -73,7 +82,6 @@ public class MemoryCardsHandler {
         log.info("Received request to delete card with id: {}", uuid);
 
         boolean deleteSuccesfull = memoryCardService.processDeleteMemoryCardByUuidRequest(uuid);
-        Map<String, String> headers = Map.of("Content-Type", "application/json");
 
         if(!deleteSuccesfull){
             ResponseMessageBody responseMessageBody = ResponseMessageBody.builder()
@@ -81,7 +89,7 @@ public class MemoryCardsHandler {
                     .build();
             APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
             response.setStatusCode(404);
-            response.setHeaders(headers);
+            response.setHeaders(standardResponseHeaders);
             response.setBody(gson.toJson(responseMessageBody));
             return response;
         }
@@ -91,7 +99,7 @@ public class MemoryCardsHandler {
                 .build();
         APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();
         response.setBody(gson.toJson(responseMessageBody));
-        response.setHeaders(headers);
+        response.setHeaders(standardResponseHeaders);
         response.setStatusCode(200);
 
         return response;

@@ -4,6 +4,7 @@ import io.theclouddeveloper.memorycards.model.MemoryCard;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,6 +38,10 @@ public class MemoryCardService {
         memoryCardDynamoDBService.saveMemoryCard(memoryCard);
 
         return memoryCard;
+    }
+
+    public List<MemoryCard> processGetAllMemoryCardsRequest(){
+        return memoryCardDynamoDBService.scanAllMemoryCards();
     }
 
     public Optional<MemoryCard> processGetMemoryCardByUuid(String uuid){

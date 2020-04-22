@@ -9,7 +9,9 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -33,6 +35,15 @@ public class MemoryCardDynamoDBService {
     public void saveMemoryCard(MemoryCard memoryCard){
         log.info("Saving memoryCard: {}", memoryCard);
         memoryCardTable.putItem(memoryCard);
+    }
+
+    public List<MemoryCard> scanAllMemoryCards(){
+        log.info("Scanning for all memorCards");
+        List<MemoryCard> memoryCards = memoryCardTable.scan().items()
+                .stream()
+                .limit(100) // I limit the result here cause I don't wan't to add the extra complexity of pagination to this project
+                .collect(Collectors.toList());
+        return memoryCards;
     }
 
     public Optional<MemoryCard> getMemoryCardByUuid(String uuid){
