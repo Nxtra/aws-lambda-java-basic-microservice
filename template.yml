@@ -12,6 +12,14 @@ Parameters:
     Default: dev
 
 Resources:
+  MemoryCardHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - '*'
   CreateNewMemoryCardFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -34,11 +42,13 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
-          REGION: "eu-west-1"
+#          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MemoryCardHttpApi
+            PayloadFormatVersion: '2.0'
             Path: /memory-cards
             Method: POST
   GetAllMemoryCardsFunction:
@@ -63,11 +73,13 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
-          REGION: "eu-west-1"
+#          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MemoryCardHttpApi
+            PayloadFormatVersion: '2.0'
             Path: /memory-cards
             Method: GET
   GetMemoryCardsByAuthorWithCategoryFunction:
@@ -92,11 +104,13 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
-          REGION: "eu-west-1"
+#          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MemoryCardHttpApi
+            PayloadFormatVersion: '2.0'
             Path: /memory-cards/{author}/{category}
             Method: GET
   GetMemoryCardByUuidFunction:
@@ -121,11 +135,13 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
-          REGION: "eu-west-1"
+#          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MemoryCardHttpApi
+            PayloadFormatVersion: '2.0'
             Path: /memory-cards/{uuid}
             Method: GET
   DeleteMemoryCardByUuidFunction:
@@ -150,11 +166,13 @@ Resources:
         Variables:
           TABLE_NAME: !Ref MemoryCardsTable
           TABLE_ARN: !GetAtt MemoryCardsTable.Arn
-          REGION: "eu-west-1"
+#          REGION: "eu-west-1"
       Events:
         HttpApiEvent:
           Type: HttpApi
           Properties:
+            ApiId: !Ref MemoryCardHttpApi
+            PayloadFormatVersion: '2.0'
             Path: /memory-cards/{uuid}
             Method: DELETE
   MemoryCardsTable:
@@ -193,3 +211,11 @@ Resources:
             ProjectionType: ALL
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
+
+Outputs:
+  BaseURL:
+    Description: The baseURL for your API
+    Value:  !Sub 'https://${MemoryCardHttpApi}.execute-api.${AWS::Region}.amazonaws.com/memory-cards'
+  TableName:
+    Description: Name of the table on which the operations happen and where the memory cards are stored
+    Value: !Ref MemoryCardsTable
