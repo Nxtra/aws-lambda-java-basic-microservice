@@ -18,6 +18,6 @@ GET {{BASE_URL}}/{{author}}/{{category}}
 GET {{BASE_URL}}
 
 ### Delete by uuid
-DELETE {{BASE_URL}}{{uuid}}
+DELETE {{BASE_URL}}/{{uuid}}
 
 ###
