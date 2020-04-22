@@ -36,3 +36,5 @@ task buildZip(type: Zip) {
         from configurations.runtimeClasspath
     }
 }
+
+build.finalizedBy buildZip

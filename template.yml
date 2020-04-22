@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StackTagName:
+    Type: String
+    Description: Stack Name
+    Default: aws-lambda-java-basic-service
+  EnvironmentTagName:
+    Type: String
+    Description: Environment Name
+    Default: dev
+
+Resources:
+  CreateNewTipFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateNewTipFunction
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: CreateNewTipFunction
+      CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
+      Handler: io.theclouddeveloper.tips.Handler::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /tips
+            Method: POST
+      ReservedConcurrentExecutions: 1
+
+Outputs:
+  TipsEndpoint:
+    Description: Information about the value
+    Value: Value to return
