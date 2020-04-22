@@ -26,7 +26,7 @@ Operations:
 * deploy first time: `sam deploy --guided`
 * deploy: `sam deploy`
 * build and deploy. After deploying for the first time you can build and deploy wit using the `build-and-deploy.sh` script.
-* delete the stack: `aws cloudformation delete-stack --stack-name aws-lambda-java-basic-service`
+* delete the stack: `aws cloudformation delete-stack --stack-name {{name-of-your-stack}}`
 
 OUTPUTS: The stack will output the baseURL for the application on which you can execute requests.
 
