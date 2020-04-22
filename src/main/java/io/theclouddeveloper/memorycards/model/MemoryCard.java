@@ -74,7 +74,7 @@ public class MemoryCard {
         this.memoryText = memoryText;
     }
 
-    @DynamoDbSecondaryPartitionKey(indexNames = "idIndex")
+    @DynamoDbSecondaryPartitionKey(indexNames = "uuidIndex")
     public String getUuid() {
         return uuid;
     }

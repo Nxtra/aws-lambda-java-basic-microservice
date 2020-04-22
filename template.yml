@@ -41,7 +41,64 @@ Resources:
           Properties:
             Path: /memory-cards
             Method: POST
-
+  GetMemoryCardByUuidFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-GetMemoryCardByUuidFunction
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: GetMemoryCardByUuidFunction
+      CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
+      Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleGetMemoryCardByUuidRequest
+      Runtime: java11
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MemoryCardsTable
+      ReservedConcurrentExecutions: 1
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref MemoryCardsTable
+          TABLE_ARN: !GetAtt MemoryCardsTable.Arn
+          REGION: "eu-west-1"
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /memory-cards/{uuid}
+            Method: GET
+  DeleteMemoryCardByUuidFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-DeleteMemoryCardByUuidFunction
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: DeleteMemoryCardByUuidFunction
+      CodeUri: build/distributions/java-base-lambda-service-1.0.0-SNAPSHOT.zip
+      Handler: io.theclouddeveloper.memorycards.MemoryCardsHandler::handleDeleteMemoryCardByUuid
+      Runtime: java11
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MemoryCardsTable
+      ReservedConcurrentExecutions: 1
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref MemoryCardsTable
+          TABLE_ARN: !GetAtt MemoryCardsTable.Arn
+          REGION: "eu-west-1"
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /memory-cards/{uuid}
+            Method: DELETE
   MemoryCardsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -70,7 +127,7 @@ Resources:
           Projection:
             ProjectionType: ALL
       GlobalSecondaryIndexes:
-        - IndexName: idIndex
+        - IndexName: uuidIndex
           KeySchema:
             - AttributeName: uuid
               KeyType: HASH

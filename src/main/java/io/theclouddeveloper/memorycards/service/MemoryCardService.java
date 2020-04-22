@@ -4,6 +4,7 @@ import io.theclouddeveloper.memorycards.model.MemoryCard;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -36,5 +37,24 @@ public class MemoryCardService {
         memoryCardDynamoDBService.saveMemoryCard(memoryCard);
 
         return memoryCard;
+    }
+
+    public Optional<MemoryCard> processGetMemoryCardByUuid(String uuid){
+        log.info("Processing retrieval of memoryCard with id: {}", uuid);
+
+        Optional<MemoryCard> memoryCardOptional = memoryCardDynamoDBService.getMemoryCardByUuid(uuid);
+
+        return memoryCardOptional;
+    }
+
+    public boolean processDeleteMemoryCardByUuidRequest(String uuid){
+        log.info("Processing removal of memoryCard with id: {}", uuid);
+
+        Optional<MemoryCard> memoryCardOptional = memoryCardDynamoDBService.getMemoryCardByUuid(uuid);
+        if(memoryCardOptional.isEmpty()){
+            return false;
+        }
+        MemoryCard memoryCardThatWasDeleted = memoryCardDynamoDBService.deleteMemoryCard(memoryCardOptional.get());
+        return true;
     }
 }

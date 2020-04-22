@@ -2,11 +2,14 @@ package io.theclouddeveloper.memorycards.service;
 
 import io.theclouddeveloper.memorycards.model.MemoryCard;
 import lombok.extern.slf4j.Slf4j;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
+import software.amazon.awssdk.enhanced.dynamodb.*;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
+import java.util.Optional;
 
 
 @Slf4j
@@ -30,5 +33,19 @@ public class MemoryCardDynamoDBService {
     public void saveMemoryCard(MemoryCard memoryCard){
         log.info("Saving memoryCard: {}", memoryCard);
         memoryCardTable.putItem(memoryCard);
+    }
+
+    public Optional<MemoryCard> getMemoryCardByUuid(String uuid){
+
+        DynamoDbIndex<MemoryCard> memoryCardByUuidIndex = memoryCardTable.index("uuidIndex");
+        PageIterable<MemoryCard> memoryCardWithUuid = (PageIterable<MemoryCard>) memoryCardByUuidIndex
+                .query(r -> r.queryConditional(QueryConditional.keyEqualTo(k -> k.partitionValue(uuid))).limit(1)); // why te cast?
+        return memoryCardWithUuid.items().stream().findFirst();
+    }
+
+    public MemoryCard deleteMemoryCard(MemoryCard memoryCardToDelete){
+        log.info("Deleting memoryCard with id: {}", memoryCardToDelete.getUuid());
+        MemoryCard memoryCardThatWasDeleted = memoryCardTable.deleteItem(Key.builder().partitionValue(memoryCardToDelete.getAuthor()).sortValue(memoryCardToDelete.getCategoryCreatedTimestamp()).build());
+        return memoryCardThatWasDeleted;
     }
 }
