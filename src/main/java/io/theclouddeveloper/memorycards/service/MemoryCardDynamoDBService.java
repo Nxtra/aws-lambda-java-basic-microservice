@@ -13,17 +13,19 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class MemoryCardDynamoDBService {
 
     private static final TableSchema<MemoryCard> MEMORYCARD_TABLE_SCHEMA = TableSchema.fromBean(MemoryCard.class);
+    private DynamoDbClient dynamoDbClient;
+    private DynamoDbEnhancedClient enhancedClient;
+    private DynamoDbTable<MemoryCard> memoryCardTable;
 
-
-    private DynamoDbClient dynamoDbClient = DynamoDbClient.builder()
-            .region(System.getenv("REGION") != null? Region.of(System.getenv("REGION")) : Region.of("us-east-1"))
-            .build();
-
-    private DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder()
-            .dynamoDbClient(dynamoDbClient)
-            .build();
-
-    private DynamoDbTable<MemoryCard> memoryCardTable = enhancedClient.table(System.getenv("TABLE_NAME"), MEMORYCARD_TABLE_SCHEMA);
+    public MemoryCardDynamoDBService() {
+        dynamoDbClient = DynamoDbClient.builder()
+                .region(System.getenv("REGION") != null? Region.of(System.getenv("REGION")) : Region.of("us-east-1"))
+                .build();
+        enhancedClient = DynamoDbEnhancedClient.builder()
+                .dynamoDbClient(dynamoDbClient)
+                .build();
+        memoryCardTable  = enhancedClient.table(System.getenv("TABLE_NAME"), MEMORYCARD_TABLE_SCHEMA);
+    }
 
     public void saveMemoryCard(MemoryCard memoryCard){
         log.info("Saving memoryCard: {}", memoryCard);

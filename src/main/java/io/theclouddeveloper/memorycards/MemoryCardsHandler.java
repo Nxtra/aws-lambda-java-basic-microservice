@@ -15,8 +15,13 @@ import java.util.Map;
 @Slf4j
 public class MemoryCardsHandler {
 
-    Gson gson = new GsonBuilder().create();
-    MemoryCardService memoryCardService = new MemoryCardService();
+    private Gson gson;
+    private MemoryCardService memoryCardService;
+
+    public MemoryCardsHandler() {
+        gson = new GsonBuilder().create();
+        memoryCardService = new MemoryCardService();
+    }
 
     public APIGatewayV2ProxyResponseEvent handleCreateNewMemoryCardRequest(APIGatewayV2ProxyRequestEvent input, Context context) {
         String body = input.getBody();
@@ -35,6 +40,9 @@ public class MemoryCardsHandler {
 
         return response;
     }
+
+
+
 
 
 

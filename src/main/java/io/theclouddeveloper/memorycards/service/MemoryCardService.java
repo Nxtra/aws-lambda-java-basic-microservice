@@ -9,7 +9,11 @@ import java.util.UUID;
 @Slf4j
 public class MemoryCardService {
 
-    MemoryCardDynamoDBService memoryCardDynamoDBService = new MemoryCardDynamoDBService();
+    MemoryCardDynamoDBService memoryCardDynamoDBService;
+
+    public MemoryCardService() {
+        memoryCardDynamoDBService = new MemoryCardDynamoDBService();
+    }
 
     public MemoryCard processCreateNewMemoryCardRequest(MemoryCard newMemoryCard){
         log.info("Processing memory card: {}", newMemoryCard);
